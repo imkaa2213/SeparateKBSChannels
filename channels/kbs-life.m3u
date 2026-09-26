@@ -1,6 +1,0 @@
-#EXTM3U
-
-#EXTINF:-1 tvg-id="N93" tvg-name="KBS Life" tvg-logo="https://padmin.static.kbs.co.kr/live/2025/3/11/1741700049056_443904.png" group-title="KBS",KBS Life
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
-#EXTVLCOPT:http-referrer=https://onair.kbs.co.kr/
-https://kbsnlife.gscdn.kbs.co.kr/kbsnlife-02/kbsnlife-02_sd.m3u8?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9rYnNubGlmZS5nc2Nkbi5rYnMuY28ua3Iva2JzbmxpZmUtMDIvKiIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc5MDU2ODM1N319fV19&Key-Pair-Id=APKAICDSGT3Y7IXGJ3TA&Signature=biXu2xxXS2ZYHD2a~TWNh32VA7hlEW-sUfEaFYjpOfOxPky1x9x4X-1Gk3ccMx7zN90ycW89Eg-u0~SaxPwZH7l7OfCERnnDR3q~aoJb5O7XWdNnlLyd8fhOqbIqcLQ0Cfglcji3PTsZAh~1Cu1W7val-Z2MIRBTGvb04RwkXEOFvkaXhVEWcvPtcoIq-1iCR9yjwoDgPawzb4~IekGvEz5Tm4F~yfQ7y7lSruxwHCFEhwyHfPjtN1XrpT-Qam1h6O0JSKdnoDztgY519dV2kowSRvaFKtUUBjM9jrEUwznzuFb7GjJfaa08PVD2kDHxoGl8WXR8vgHzKJUtFxs4vA__
