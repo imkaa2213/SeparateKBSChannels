@@ -1,0 +1,5 @@
+#EXTM3U
+#EXTINF:-1 tvg-id="N92" tvg-name="KBS Joy" group-title="KBS",KBS Joy
+#EXTVLCOPT:http-referrer=https://onair.kbs.co.kr/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0
+

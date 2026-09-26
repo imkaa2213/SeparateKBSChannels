@@ -1,0 +1,5 @@
+#EXTM3U
+#EXTINF:-1 tvg-id="N91" tvg-name="KBS N Sports" group-title="KBS",KBS N Sports
+#EXTVLCOPT:http-referrer=https://onair.kbs.co.kr/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0
+
