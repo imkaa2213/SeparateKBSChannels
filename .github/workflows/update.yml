@@ -4,8 +4,8 @@ on:
   workflow_dispatch:
 
   schedule:
-    # Every two hours at :17
-    - cron: "17 */2 * * *"
+    # Refresh every hour at :17
+    - cron: "17 * * * *"
 
 permissions:
   contents: write
@@ -19,7 +19,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -30,20 +29,13 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install requests
-
-      - name: Run KBS updater
-        run: |
-          python update.py
+      - name: Refresh KBS channels
+        run: python update.py
 
       - name: Show generated playlists
-        if: always()
         run: |
-          echo "Contents of channels directory:"
-          ls -lah channels/ || true
+          echo "Generated playlists:"
+          ls -lah channels/
 
       - name: Commit updated playlists
         run: |
@@ -53,7 +45,7 @@ jobs:
           git add channels/
 
           if git diff --cached --quiet; then
-            echo "No playlist changes detected."
+            echo "No playlist changes."
             exit 0
           fi
 
