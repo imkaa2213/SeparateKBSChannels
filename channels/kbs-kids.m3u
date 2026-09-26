@@ -1,6 +1,0 @@
-#EXTM3U
-
-#EXTINF:-1 tvg-id="N96" tvg-name="KBS Kids" tvg-logo="https://padmin.static.kbs.co.kr/live/2025/3/11/1741700049148_443915.png" group-title="KBS",KBS Kids
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
-#EXTVLCOPT:http-referrer=https://onair.kbs.co.kr/
-https://kbsnkids.gscdn.kbs.co.kr/kbsnkids-02/kbsnkids-02_sd.m3u8?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9rYnNua2lkcy5nc2Nkbi5rYnMuY28ua3Iva2JzbmtpZHMtMDIvKiIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc5MDU2ODQyNn19fV19&Key-Pair-Id=APKAICDSGT3Y7IXGJ3TA&Signature=TUq3~ESesrnlsGVTZjF6uHFpEdDML8KANB1G~8zcMJYufMJD8l6LNVc6V0zIPuVA3RsMQ3NDbkJf~ImTyVUF-iuBIg5RoxbgcQzZAOm1VfbgycWoqCyFss0hyQe0M9bvHLZ49ChPeyFF1osVQhdu7rqXvHAe5dQ4njFZg5kfSiU1vbtORim61Bpt-cIHB5jNjaY3cqApDISj~CcWdqnBcKe5fqprI6dRYiEBdndC-H~br1eXGTlNOt97d8Qz-qfNsl0dlqRaBO7fFO95a2-Mt~q4XrPhoO5JU9RTWheBrm2gtiJB~nQYHEs9YqNvDu8Da35XgEM-p8DJS9yM5zwlIw__
