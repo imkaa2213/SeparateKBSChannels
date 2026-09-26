@@ -1,0 +1,6 @@
+#EXTM3U
+
+#EXTINF:-1 tvg-id="14" tvg-name="KBS World" tvg-logo="https://padmin.static.kbs.co.kr/live/2025/2/3/1738538621754_433764.png" group-title="KBS",KBS World
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
+#EXTVLCOPT:http-referrer=https://onair.kbs.co.kr/
+https://world.gscdn.kbs.co.kr/world-02/world-02_sd.m3u8?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly93b3JsZC5nc2Nkbi5rYnMuY28ua3Ivd29ybGQtMDIvKiIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc5MDU2ODM2Mn19fV19&Key-Pair-Id=APKAICDSGT3Y7IXGJ3TA&Signature=PAWCpsBl-jqZuHZEug2rNN~Ah6TGKQkU0JZdboI~V8ezdEqO60wyia06FcMEQG7uyU02aVxJtl5Hi8nw1PV7BIlNAzlaS1sc~Tmous9IZj7gUzxW6GP7-Nnno5x3jxyRlXClqcGhvQB-WYNY0ukaHG8g1cPL50r7KCiQ1lmAQT6L5FuT4xypdE~8XTeVcyt5NtWhXPNx-y8lwldstQx76iVX1PFMu7paFMDNtJCpin8XDwqzprh15KU7EUWuiwdlf4Ci4dVuEDTFVixKeOv3yWwlokVsRTH2hdDTHjq5zAy9JY6kMR5etkCRNa-NQnI1sOpBtJoxwIY8BAFGg-yw9w__

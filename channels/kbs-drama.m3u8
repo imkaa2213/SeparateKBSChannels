@@ -1,0 +1,6 @@
+#EXTM3U
+
+#EXTINF:-1 tvg-id="N91" tvg-name="KBS Drama" tvg-logo="https://padmin.static.kbs.co.kr/live/2025/3/11/1741700048773_443879.png" group-title="KBS",KBS Drama
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
+#EXTVLCOPT:http-referrer=https://onair.kbs.co.kr/
+https://kbsndrama.gscdn.kbs.co.kr/kbsndrama-02/kbsndrama-02_sd.m3u8?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9rYnNuZHJhbWEuZ3NjZG4ua2JzLmNvLmtyL2tic25kcmFtYS0wMi8qIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzkwNTY4MzI5fX19XX0_&Key-Pair-Id=APKAICDSGT3Y7IXGJ3TA&Signature=eOqzGwqpRfqYjQYyeQR4PCAM5Fxl1L8KMFntif~q~bSLnSzOq8qtxJdXyTFOLbFMMeTHDd~rpZm9iZsDIwjcwxZehlImbay7TcDPvxo3rbfGuK039cEUhA6sftKJoCsIVIbWyGFqZq9Kql0-AL0OYX-1mjvPGNgS33pkuOpmulVSH9XJ1D5TXvFPB8mVBMM8KI8zj43jVaXodvRDKolMkqZXbGuo1cvzxgpwK9gJgAE~ZDyPtLGow7q6My4nrg9mDwF7BeDy-bpKuKsCJTWlWuI2vpayIQ134CgI6nPwI4NKBY8zAhJOW5Lt7q2ME7VOp6K1-0sfIe6E2ddwcGaFKw__
