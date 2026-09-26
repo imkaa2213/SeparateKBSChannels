@@ -1,18 +1,17 @@
 name: Refresh KBS TV Streams
 
 on:
-  # Allow manual runs
   workflow_dispatch:
 
-  # Refresh every 2 hours
   schedule:
+    # Every two hours at :17
     - cron: "17 */2 * * *"
 
 permissions:
   contents: write
 
 concurrency:
-  group: refresh-kbs-streams
+  group: refresh-kbs-tv-streams
   cancel-in-progress: false
 
 jobs:
@@ -20,6 +19,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -33,17 +33,19 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install requests
+          python -m pip install requests
 
-      - name: Refresh KBS streams
-        run: python update.py
-
-      - name: Show generated channels
+      - name: Run KBS updater
         run: |
-          echo "Generated channel files:"
-          ls -lah channels/
+          python update.py
 
-      - name: Commit refreshed playlists
+      - name: Show generated playlists
+        if: always()
+        run: |
+          echo "Contents of channels directory:"
+          ls -lah channels/ || true
+
+      - name: Commit updated playlists
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -51,14 +53,12 @@ jobs:
           git add channels/
 
           if git diff --cached --quiet; then
-            echo "No playlist changes."
+            echo "No playlist changes detected."
             exit 0
           fi
 
           git commit -m "Refresh KBS stream URLs"
 
-          # Avoid failing if another commit landed while
-          # this workflow was running.
           git pull --rebase origin "${GITHUB_REF_NAME}"
 
           git push origin "HEAD:${GITHUB_REF_NAME}"
