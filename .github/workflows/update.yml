@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
   schedule:
-    # Refresh every hour at :17
+    # Check hourly
     - cron: "17 * * * *"
 
 permissions:
@@ -19,6 +19,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -45,7 +46,7 @@ jobs:
           git add channels/
 
           if git diff --cached --quiet; then
-            echo "No playlist changes."
+            echo "No changes."
             exit 0
           fi
 
