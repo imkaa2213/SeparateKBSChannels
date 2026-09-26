@@ -1,9 +1,10 @@
 import os
+import sys
 import requests
 
-# ---------------------------------------------------------
+# =========================================================
 # Configuration
-# ---------------------------------------------------------
+# =========================================================
 
 OUTPUT_DIR = "channels"
 
@@ -15,18 +16,21 @@ API = (
 USER_AGENT = (
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
     "AppleWebKit/537.36 (KHTML, like Gecko) "
-    "Chrome/140.0 Safari/537.36"
+    "Chrome/140.0.0.0 Safari/537.36"
 )
 
 HEADERS = {
     "User-Agent": USER_AGENT,
     "Referer": "https://onair.kbs.co.kr/",
+    "Accept": "application/json, text/plain, */*",
+    "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
 }
 
-# TV / video only — no radio.
-#
-# These codes correspond to the currently exposed KBS
-# television/video channels.
+# ---------------------------------------------------------
+# KBS TV / video channels
+# Radio is intentionally excluded.
+# ---------------------------------------------------------
+
 CHANNELS = [
     {
         "code": "11",
@@ -76,22 +80,150 @@ CHANNELS = [
 ]
 
 
-# ---------------------------------------------------------
-# Setup
-# ---------------------------------------------------------
+# =========================================================
+# Helpers
+# =========================================================
 
-os.makedirs(OUTPUT_DIR, exist_ok=True)
+def get_items(data):
+    """
+    KBS has used more than one JSON structure.
+
+    Try all known structures.
+    """
+
+    # Structure:
+    #
+    # {
+    #   "channel": {
+    #       "item": [...]
+    #   }
+    # }
+
+    channel = data.get("channel")
+
+    if isinstance(channel, dict):
+        items = channel.get("item")
+
+        if isinstance(items, list):
+            return items
+
+        if isinstance(items, dict):
+            return [items]
+
+    # Structure:
+    #
+    # {
+    #   "channel_item": [...]
+    # }
+
+    items = data.get("channel_item")
+
+    if isinstance(items, list):
+        return items
+
+    if isinstance(items, dict):
+        return [items]
+
+    # Occasionally an API may simply return:
+    #
+    # {
+    #   "item": [...]
+    # }
+
+    items = data.get("item")
+
+    if isinstance(items, list):
+        return items
+
+    if isinstance(items, dict):
+        return [items]
+
+    return []
+
+
+def find_service_url(items):
+    """
+    Find the first usable service_url.
+    """
+
+    # Prefer HLS URLs.
+
+    for item in items:
+
+        if not isinstance(item, dict):
+            continue
+
+        url = item.get("service_url")
+
+        if (
+            isinstance(url, str)
+            and url
+            and ".m3u8" in url.lower()
+        ):
+            return url
+
+    # If KBS returns something without ".m3u8",
+    # accept service_url anyway.
+
+    for item in items:
+
+        if not isinstance(item, dict):
+            continue
+
+        url = item.get("service_url")
+
+        if isinstance(url, str) and url:
+            return url
+
+    return None
+
+
+def create_playlist(code, name, stream_url):
+    """
+    Create an M3U containing one KBS channel.
+    """
+
+    return (
+        "#EXTM3U\n"
+        f'#EXTINF:-1 '
+        f'tvg-id="{code}" '
+        f'tvg-name="{name}" '
+        f'group-title="KBS",{name}\n'
+        f"#EXTVLCOPT:http-user-agent={USER_AGENT}\n"
+        "#EXTVLCOPT:http-referrer="
+        "https://onair.kbs.co.kr/\n"
+        f"{stream_url}\n"
+    )
+
+
+# =========================================================
+# Start
+# =========================================================
+
+print()
+print("==========================================")
+print(" KBS TV Stream Updater")
+print("==========================================")
+print()
+
+os.makedirs(
+    OUTPUT_DIR,
+    exist_ok=True,
+)
 
 session = requests.Session()
-session.headers.update(HEADERS)
+
+session.headers.update(
+    HEADERS
+)
 
 updated = 0
 failed = 0
 
 
-# ---------------------------------------------------------
-# Retrieve each channel
-# ---------------------------------------------------------
+# =========================================================
+# Update channels
+# =========================================================
 
 for channel in CHANNELS:
 
@@ -99,98 +231,192 @@ for channel in CHANNELS:
     name = channel["name"]
     filename = channel["file"]
 
-    print(f"Updating {name} ({code})...")
+    print("------------------------------------------")
+    print(f"Channel : {name}")
+    print(f"Code    : {code}")
+
+    url = API.format(code)
+
+    print(f"Request : {url}")
 
     try:
 
+        # -------------------------------------------------
+        # Request KBS API
+        # -------------------------------------------------
+
         response = session.get(
-            API.format(code),
+            url,
             timeout=30,
+        )
+
+        print(
+            f"HTTP    : {response.status_code}"
         )
 
         response.raise_for_status()
 
-        data = response.json()
+        # -------------------------------------------------
+        # Parse JSON
+        # -------------------------------------------------
 
-        items = data.get("channel_item", [])
+        try:
+
+            data = response.json()
+
+        except Exception:
+
+            preview = response.text[:500]
+
+            raise RuntimeError(
+                "KBS returned non-JSON response: "
+                + preview
+            )
+
+        # -------------------------------------------------
+        # Locate channel items
+        # -------------------------------------------------
+
+        items = get_items(data)
 
         if not items:
+
+            # Print the top-level keys because this is
+            # extremely useful if KBS changes its API.
+
+            keys = list(data.keys())
+
             raise RuntimeError(
-                "KBS API returned no channel_item"
+                "Could not locate channel items. "
+                f"Top-level JSON keys: {keys}. "
+                f"Response: {str(data)[:1000]}"
             )
 
-        # Find the first item containing a usable stream.
-        stream_url = None
-
-        for item in items:
-            candidate = item.get("service_url")
-
-            if candidate and ".m3u8" in candidate.lower():
-                stream_url = candidate
-                break
-
-        if not stream_url:
-            raise RuntimeError(
-                "KBS API returned no HLS service_url"
-            )
-
-        # -------------------------------------------------
-        # Build M3U
-        # -------------------------------------------------
-
-        playlist = (
-            "#EXTM3U\n"
-            f'#EXTINF:-1 tvg-id="{code}" '
-            f'tvg-name="{name}" '
-            f'group-title="KBS",{name}\n'
-            f"#EXTVLCOPT:http-user-agent={USER_AGENT}\n"
-            "#EXTVLCOPT:http-referrer="
-            "https://onair.kbs.co.kr/\n"
-            f"{stream_url}\n"
+        print(
+            f"Items   : {len(items)}"
         )
 
-        path = os.path.join(
+        # -------------------------------------------------
+        # Find stream
+        # -------------------------------------------------
+
+        stream_url = find_service_url(
+            items
+        )
+
+        if not stream_url:
+
+            raise RuntimeError(
+                "No service_url found. "
+                f"Items: {str(items)[:1000]}"
+            )
+
+        print(
+            "Stream  : found"
+        )
+
+        # -------------------------------------------------
+        # Generate M3U
+        # -------------------------------------------------
+
+        playlist = create_playlist(
+            code,
+            name,
+            stream_url,
+        )
+
+        filepath = os.path.join(
             OUTPUT_DIR,
             filename,
         )
 
-        # Write only after API retrieval succeeds.
-        # Therefore an API failure will NOT destroy the
-        # previously working playlist.
+        # IMPORTANT:
+        #
+        # We don't touch the old file until a new stream
+        # URL has successfully been obtained.
+        #
+        # Therefore a temporary KBS API failure won't
+        # destroy the previous playlist.
+
         with open(
-            path,
+            filepath,
             "w",
             encoding="utf-8",
         ) as file:
-            file.write(playlist)
+
+            file.write(
+                playlist
+            )
 
         updated += 1
 
-        print(f"  OK -> {path}")
+        print(
+            f"Result  : UPDATED -> {filepath}"
+        )
 
     except Exception as error:
 
         failed += 1
 
         print(
-            f"  FAILED -> {name}: {error}"
+            f"Result  : FAILED"
         )
 
+        print(
+            f"Error   : {error}"
+        )
 
-# ---------------------------------------------------------
+    print()
+
+
+# =========================================================
 # Summary
-# ---------------------------------------------------------
+# =========================================================
 
 print()
-print("=" * 50)
-print(f"Updated: {updated}")
-print(f"Failed : {failed}")
-print("=" * 50)
+print("==========================================")
+print(" Update Summary")
+print("==========================================")
+print()
+
+print(
+    f"Updated: {updated}"
+)
+
+print(
+    f"Failed : {failed}"
+)
+
+print()
 
 
-# Don't let GitHub Actions report success if absolutely
-# nothing could be refreshed.
+# =========================================================
+# Exit status
+# =========================================================
+
 if updated == 0:
-    raise SystemExit(
-        "ERROR: No KBS channels could be updated."
+
+    print(
+        "ERROR: No KBS channels were updated."
     )
+
+    sys.exit(1)
+
+
+if failed > 0:
+
+    print(
+        "WARNING: Some channels failed, but successful "
+        "channels were updated."
+    )
+
+    # Don't fail the entire GitHub Action if at least
+    # one channel succeeded.
+    sys.exit(0)
+
+
+print(
+    "All available KBS channels updated successfully."
+)
+
+sys.exit(0)
