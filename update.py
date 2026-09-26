@@ -12,15 +12,15 @@ SOURCE = (
 OUTPUT_DIR = "channels"
 
 CHANNELS = {
-    "11": "kbs1.m3u",
-    "12": "kbs2.m3u",
-    "14": "kbs-world.m3u",
-    "81": "kbs24.m3u",
-    "N91": "kbs-drama.m3u",
-    "N92": "kbs-joy.m3u",
-    "N93": "kbs-life.m3u",
-    "N94": "kbs-story.m3u",
-    "N96": "kbs-kids.m3u",
+    "11": "kbs1.m3u8",
+    "12": "kbs2.m3u8",
+    "14": "kbs-world.m3u8",
+    "81": "kbs24.m3u8",
+    "N91": "kbs-drama.m3u8",
+    "N92": "kbs-joy.m3u8",
+    "N93": "kbs-life.m3u8",
+    "N94": "kbs-story.m3u8",
+    "N96": "kbs-kids.m3u8",
 }
 
 
