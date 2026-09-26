@@ -1,192 +1,120 @@
+import json
 import os
 import sys
-import requests
+import urllib.request
 
-# =========================================================
-# Configuration
-# =========================================================
+SOURCE = (
+    "https://raw.githubusercontent.com/"
+    "kgkaku/KBS-Live-Channels-Playlist/"
+    "main/kbs-nsplayer.m3u"
+)
 
 OUTPUT_DIR = "channels"
 
-API = (
-    "https://cfpwwwapi.kbs.co.kr/"
-    "api/v1/landing/live/channel_code/{}"
-)
-
 USER_AGENT = (
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-    "AppleWebKit/537.36 (KHTML, like Gecko) "
-    "Chrome/140.0.0.0 Safari/537.36"
+    "AppleWebKit/537.36"
 )
 
-HEADERS = {
-    "User-Agent": USER_AGENT,
-    "Referer": "https://onair.kbs.co.kr/",
-    "Accept": "application/json, text/plain, */*",
-    "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
-}
-
-# ---------------------------------------------------------
-# KBS TV / video channels
-# Radio is intentionally excluded.
-# ---------------------------------------------------------
-
-CHANNELS = [
-    {
+# Only TV/video.
+# Radio is not included.
+CHANNELS = {
+    "KBS1": {
         "code": "11",
-        "name": "KBS1",
         "file": "kbs1.m3u",
     },
-    {
+    "KBS2": {
         "code": "12",
-        "name": "KBS2",
         "file": "kbs2.m3u",
     },
-    {
+    "KBS World": {
         "code": "14",
-        "name": "KBS World",
         "file": "kbs-world.m3u",
     },
-    {
+    "KBS24": {
         "code": "81",
-        "name": "KBS24",
         "file": "kbs24.m3u",
     },
-    {
+    "KBS Drama": {
         "code": "N91",
-        "name": "KBS Drama",
         "file": "kbs-drama.m3u",
     },
-    {
+    "KBS Joy": {
         "code": "N92",
-        "name": "KBS Joy",
         "file": "kbs-joy.m3u",
     },
-    {
+    "KBS Life": {
         "code": "N93",
-        "name": "KBS Life",
         "file": "kbs-life.m3u",
     },
-    {
+    "KBS Story": {
         "code": "N94",
-        "name": "KBS Story",
         "file": "kbs-story.m3u",
     },
-    {
+    "KBS Kids": {
         "code": "N96",
-        "name": "KBS Kids",
         "file": "kbs-kids.m3u",
     },
-]
+}
 
 
-# =========================================================
-# Helpers
-# =========================================================
+def download_source():
+    print("Downloading current KBS stream data...")
 
-def get_items(data):
+    request = urllib.request.Request(
+        SOURCE,
+        headers={
+            "User-Agent": USER_AGENT,
+        },
+    )
+
+    with urllib.request.urlopen(
+        request,
+        timeout=30,
+    ) as response:
+        text = response.read().decode("utf-8")
+
+    return json.loads(text)
+
+
+def build_stream_url(link, cookie):
     """
-    KBS has used more than one JSON structure.
+    Source provides the stable stream URL separately
+    from KBS's current signed authorization.
 
-    Try all known structures.
-    """
-
-    # Structure:
-    #
-    # {
-    #   "channel": {
-    #       "item": [...]
-    #   }
-    # }
-
-    channel = data.get("channel")
-
-    if isinstance(channel, dict):
-        items = channel.get("item")
-
-        if isinstance(items, list):
-            return items
-
-        if isinstance(items, dict):
-            return [items]
-
-    # Structure:
-    #
-    # {
-    #   "channel_item": [...]
-    # }
-
-    items = data.get("channel_item")
-
-    if isinstance(items, list):
-        return items
-
-    if isinstance(items, dict):
-        return [items]
-
-    # Occasionally an API may simply return:
-    #
-    # {
-    #   "item": [...]
-    # }
-
-    items = data.get("item")
-
-    if isinstance(items, list):
-        return items
-
-    if isinstance(items, dict):
-        return [items]
-
-    return []
-
-
-def find_service_url(items):
-    """
-    Find the first usable service_url.
+    For ordinary M3U players, append the authorization
+    as the query string.
     """
 
-    # Prefer HLS URLs.
+    if not cookie:
+        return link
 
-    for item in items:
+    if "?" in link:
+        return link + "&" + cookie
 
-        if not isinstance(item, dict):
-            continue
-
-        url = item.get("service_url")
-
-        if (
-            isinstance(url, str)
-            and url
-            and ".m3u8" in url.lower()
-        ):
-            return url
-
-    # If KBS returns something without ".m3u8",
-    # accept service_url anyway.
-
-    for item in items:
-
-        if not isinstance(item, dict):
-            continue
-
-        url = item.get("service_url")
-
-        if isinstance(url, str) and url:
-            return url
-
-    return None
+    return link + "?" + cookie
 
 
-def create_playlist(code, name, stream_url):
-    """
-    Create an M3U containing one KBS channel.
-    """
+def write_channel(name, info, source_item):
+    link = source_item.get("link", "").strip()
+    cookie = source_item.get("cookie", "").strip()
 
-    return (
+    if not link:
+        raise RuntimeError("Missing stream link")
+
+    if not cookie:
+        raise RuntimeError("Missing KBS authorization")
+
+    stream_url = build_stream_url(
+        link,
+        cookie,
+    )
+
+    code = info["code"]
+
+    playlist = (
         "#EXTM3U\n"
-        f'#EXTINF:-1 '
-        f'tvg-id="{code}" '
+        f'#EXTINF:-1 tvg-id="{code}" '
         f'tvg-name="{name}" '
         f'group-title="KBS",{name}\n'
         f"#EXTVLCOPT:http-user-agent={USER_AGENT}\n"
@@ -195,228 +123,109 @@ def create_playlist(code, name, stream_url):
         f"{stream_url}\n"
     )
 
+    path = os.path.join(
+        OUTPUT_DIR,
+        info["file"],
+    )
 
-# =========================================================
-# Start
-# =========================================================
+    # Write only after we have both URL and authorization.
+    with open(
+        path,
+        "w",
+        encoding="utf-8",
+    ) as file:
+        file.write(playlist)
 
-print()
-print("==========================================")
-print(" KBS TV Stream Updater")
-print("==========================================")
-print()
-
-os.makedirs(
-    OUTPUT_DIR,
-    exist_ok=True,
-)
-
-session = requests.Session()
-
-session.headers.update(
-    HEADERS
-)
-
-updated = 0
-failed = 0
+    return path
 
 
-# =========================================================
-# Update channels
-# =========================================================
-
-for channel in CHANNELS:
-
-    code = channel["code"]
-    name = channel["name"]
-    filename = channel["file"]
-
-    print("------------------------------------------")
-    print(f"Channel : {name}")
-    print(f"Code    : {code}")
-
-    url = API.format(code)
-
-    print(f"Request : {url}")
-
-    try:
-
-        # -------------------------------------------------
-        # Request KBS API
-        # -------------------------------------------------
-
-        response = session.get(
-            url,
-            timeout=30,
-        )
-
-        print(
-            f"HTTP    : {response.status_code}"
-        )
-
-        response.raise_for_status()
-
-        # -------------------------------------------------
-        # Parse JSON
-        # -------------------------------------------------
-
-        try:
-
-            data = response.json()
-
-        except Exception:
-
-            preview = response.text[:500]
-
-            raise RuntimeError(
-                "KBS returned non-JSON response: "
-                + preview
-            )
-
-        # -------------------------------------------------
-        # Locate channel items
-        # -------------------------------------------------
-
-        items = get_items(data)
-
-        if not items:
-
-            # Print the top-level keys because this is
-            # extremely useful if KBS changes its API.
-
-            keys = list(data.keys())
-
-            raise RuntimeError(
-                "Could not locate channel items. "
-                f"Top-level JSON keys: {keys}. "
-                f"Response: {str(data)[:1000]}"
-            )
-
-        print(
-            f"Items   : {len(items)}"
-        )
-
-        # -------------------------------------------------
-        # Find stream
-        # -------------------------------------------------
-
-        stream_url = find_service_url(
-            items
-        )
-
-        if not stream_url:
-
-            raise RuntimeError(
-                "No service_url found. "
-                f"Items: {str(items)[:1000]}"
-            )
-
-        print(
-            "Stream  : found"
-        )
-
-        # -------------------------------------------------
-        # Generate M3U
-        # -------------------------------------------------
-
-        playlist = create_playlist(
-            code,
-            name,
-            stream_url,
-        )
-
-        filepath = os.path.join(
-            OUTPUT_DIR,
-            filename,
-        )
-
-        # IMPORTANT:
-        #
-        # We don't touch the old file until a new stream
-        # URL has successfully been obtained.
-        #
-        # Therefore a temporary KBS API failure won't
-        # destroy the previous playlist.
-
-        with open(
-            filepath,
-            "w",
-            encoding="utf-8",
-        ) as file:
-
-            file.write(
-                playlist
-            )
-
-        updated += 1
-
-        print(
-            f"Result  : UPDATED -> {filepath}"
-        )
-
-    except Exception as error:
-
-        failed += 1
-
-        print(
-            f"Result  : FAILED"
-        )
-
-        print(
-            f"Error   : {error}"
-        )
-
+def main():
+    print()
+    print("=" * 50)
+    print(" KBS Separate Channel Updater")
+    print("=" * 50)
     print()
 
-
-# =========================================================
-# Summary
-# =========================================================
-
-print()
-print("==========================================")
-print(" Update Summary")
-print("==========================================")
-print()
-
-print(
-    f"Updated: {updated}"
-)
-
-print(
-    f"Failed : {failed}"
-)
-
-print()
-
-
-# =========================================================
-# Exit status
-# =========================================================
-
-if updated == 0:
-
-    print(
-        "ERROR: No KBS channels were updated."
+    os.makedirs(
+        OUTPUT_DIR,
+        exist_ok=True,
     )
 
-    sys.exit(1)
+    try:
+        source_data = download_source()
+    except Exception as error:
+        print(f"ERROR downloading source: {error}")
+        return 1
 
-
-if failed > 0:
+    if not isinstance(source_data, list):
+        print("ERROR: Source data isn't a JSON list.")
+        return 1
 
     print(
-        "WARNING: Some channels failed, but successful "
-        "channels were updated."
+        f"Source contains {len(source_data)} channels."
     )
+    print()
 
-    # Don't fail the entire GitHub Action if at least
-    # one channel succeeded.
-    sys.exit(0)
+    # Make source lookup by name.
+    source_by_name = {}
+
+    for item in source_data:
+        if not isinstance(item, dict):
+            continue
+
+        name = item.get("name")
+
+        if name:
+            source_by_name[name.strip()] = item
+
+    updated = 0
+    failed = 0
+
+    for name, info in CHANNELS.items():
+
+        print("-" * 50)
+        print(f"Channel : {name}")
+        print(f"Code    : {info['code']}")
+
+        source_item = source_by_name.get(name)
+
+        if source_item is None:
+            print("Result  : FAILED")
+            print("Error   : Channel missing from source")
+            failed += 1
+            continue
+
+        try:
+            path = write_channel(
+                name,
+                info,
+                source_item,
+            )
+
+            print(f"Result  : UPDATED")
+            print(f"File    : {path}")
+
+            updated += 1
+
+        except Exception as error:
+            print("Result  : FAILED")
+            print(f"Error   : {error}")
+
+            failed += 1
+
+    print()
+    print("=" * 50)
+    print(" Update Summary")
+    print("=" * 50)
+    print(f"Updated: {updated}")
+    print(f"Failed : {failed}")
+    print("=" * 50)
+
+    if updated == 0:
+        return 1
+
+    return 0
 
 
-print(
-    "All available KBS channels updated successfully."
-)
-
-sys.exit(0)
+if __name__ == "__main__":
+    sys.exit(main())
