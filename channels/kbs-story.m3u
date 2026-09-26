@@ -1,0 +1,5 @@
+#EXTM3U
+#EXTINF:-1 tvg-id="N94" tvg-name="KBS Story" group-title="KBS",KBS Story
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
+#EXTVLCOPT:http-referrer=https://onair.kbs.co.kr/
+https://kbsnw.gscdn.kbs.co.kr/kbsnw-02/kbsnw-02_sd.m3u8?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9rYnNudy5nc2Nkbi5rYnMuY28ua3Iva2JzbnctMDIvKiIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4MDEzMzQ5NH19fV19&Key-Pair-Id=APKAICDSGT3Y7IXGJ3TA&Signature=FsbISodr4oOtPLZRnrGtqR~OAYkm4nVscattCHegxYgfHdHU23ioIYMeaNNKdmYf72iNVTNHuarTrFIejMf7hxqMGl-jwfwpW9O0eEtCoQ79deM9PNvkPyUdDR0raukhA0Q8dLH01wU-954LJkoCmSQCoNXFoXqrQEMX24FIQiWIy58GRaq8nzBYNW6K1bv583uiVzq9X6B9glQWxehOCaFxfjfx4owvdk0kYTBMiqaKqkLGitOGZxSLiq1vl2jTnLZWTin1wLEEcDE~MQbHgE6nqWolC08uvtO1Pcf-qfL~ZXy84MN-XiwDIbEaPlUMmzdcKyI3uFgipmdGDTuwmQ__

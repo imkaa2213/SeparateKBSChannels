@@ -1,0 +1,5 @@
+#EXTM3U
+#EXTINF:-1 tvg-id="11" tvg-name="KBS1" group-title="KBS",KBS1
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
+#EXTVLCOPT:http-referrer=https://onair.kbs.co.kr/
+https://1tv.gscdn.kbs.co.kr/1tv_3.m3u8?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly8xdHYuZ3NjZG4ua2JzLmNvLmtyLyoiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODAxMzM1Mjl9fX1dfQ__&Key-Pair-Id=APKAICDSGT3Y7IXGJ3TA&Signature=JaGARJfNeva9FFu4NL1NVSR94M5ymaQ9V52E33ubPqLCVhKkCEDI4Zqs-DUP9lsKrbn5dcRHgmGIwx8POn2iAsV4u-eWBlnW5Pgfyx6S0EB761-S795pEIfttQrA42yvKrqinYdt7JQPMAXHST2TXgyyALBnC~u-NKE5xg3jSo9bqHrwgeS4tFvM5I5zagLLRH~QEZGtLUvI~1YMwtYqXIK0E1XyEt-~r7Kz2Yj6M-Ts3P9nXaFA-b3HVmCcvTtajB47T~Gd86cTHbcWEsylWW92tV17gD-Me42uZfdY5qRiTqbIN7xnMVejVz~hW-soUTGDAi3e~Bo-1~8Mvh-1EQ__

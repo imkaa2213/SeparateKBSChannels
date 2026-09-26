@@ -1,5 +1,5 @@
 #EXTM3U
 #EXTINF:-1 tvg-id="N92" tvg-name="KBS Joy" group-title="KBS",KBS Joy
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
 #EXTVLCOPT:http-referrer=https://onair.kbs.co.kr/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0
-
+https://kbsnjoy.gscdn.kbs.co.kr/kbsnjoy-02/kbsnjoy-02_sd.m3u8?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9rYnNuam95LmdzY2RuLmticy5jby5rci9rYnNuam95LTAyLyoiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODAxMzM0ODB9fX1dfQ__&Key-Pair-Id=APKAICDSGT3Y7IXGJ3TA&Signature=FEM~bbXpi5bqYGxDCW5q4OG3gVVlI0PeHhI8KFFhI6q51m8u3BdL5zS6oLNh43c3ImxK1XexNgi0zUUO31jh6lFG9~rXbuthIPnQzpW4VKlIL0X3gGK4ZPPMqmZwFShPhlW9e1YCD6i56d0xQ2-l4Ca03CLZhYg~GFLQkwtNC9jo9q-ykNetC6fo~A9-fT7mBv~l7iy3qE-MQ08YnQ85hjuv19qn03HXnF6lW~zXB9OvrbKjPLhAvk17iZKhmsC40X76Jee7TUlrCjeZBHSdBAxJT1mQ1jjVHFECh1UMmvSY1LkBcKny17ZV6N4VUreH0S-iVB86wbD0rE1pTZv2jw__

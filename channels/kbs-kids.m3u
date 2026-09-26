@@ -1,0 +1,5 @@
+#EXTM3U
+#EXTINF:-1 tvg-id="N96" tvg-name="KBS Kids" group-title="KBS",KBS Kids
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
+#EXTVLCOPT:http-referrer=https://onair.kbs.co.kr/
+https://kbsnkids.gscdn.kbs.co.kr/kbsnkids-02/kbsnkids-02_sd.m3u8?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9rYnNua2lkcy5nc2Nkbi5rYnMuY28ua3Iva2JzbmtpZHMtMDIvKiIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4MDEzMzUwOH19fV19&Key-Pair-Id=APKAICDSGT3Y7IXGJ3TA&Signature=XIdoqezamcmvF-4JXb5JbR0wuvuzU~pkisXEXangaRu6LkJIA1gck3bI7uGw12qLGGWX9rDiVE1A2-uo5128A6cBQ3Ivlw0lu~ZjQFMR4Y9zp0jwDx2DjvqiSZnIHoU3j748fCUxZhpYl8WFhz0TX-XD4dKSP1oGygYy7-lGJIygtReKeUkl7kh3hErFcQ-tJJHBrLRgRYpqlM4PUQ9JwPPUhfdUKmDAkqIABTCGNKgldzh1RjpYHdgjFRuv13Kul5412yiUwDzJSIhe6XyxCktD8MUgJt4yDAXfXSsGSJ60w9g6qmb99pqdId1iJHnsxiYhyyjeOvk-PqbRUDo93Q__

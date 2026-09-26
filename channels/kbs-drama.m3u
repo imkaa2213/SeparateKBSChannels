@@ -1,5 +1,5 @@
 #EXTM3U
-#EXTINF:-1 tvg-id="N93" tvg-name="KBS Drama" group-title="KBS",KBS Drama
+#EXTINF:-1 tvg-id="N91" tvg-name="KBS Drama" group-title="KBS",KBS Drama
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
 #EXTVLCOPT:http-referrer=https://onair.kbs.co.kr/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0
-
+https://kbsndrama.gscdn.kbs.co.kr/kbsndrama-02/kbsndrama-02_sd.m3u8?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9rYnNuZHJhbWEuZ3NjZG4ua2JzLmNvLmtyL2tic25kcmFtYS0wMi8qIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzgwMTMzNDkzfX19XX0_&Key-Pair-Id=APKAICDSGT3Y7IXGJ3TA&Signature=WAToMVmqV1HwaUXu8pOYv9LUWBdDTpog39Edgq5kHO-gJjq4c2daI-kXQdZabZfmrSR1Ce535JWxX-i4uF-Ezv2Lw6s-dto5-cEmoJKUAKNcY4xmQcShuSkkzHG1ZbY3~usBqvaYlP29obc00V9cHt0IS6PaiBwtNHJXy5SNgJsl8tRdLf3z5w9fmVZJNB2yNWMOVkGKP5vdXCmK84ATlna54PLgXK-xHYqXbmqK7cytPKfy7woBhXO7yOMnAeGOPgUW9uosc5M~yVz-okEmjtD~fuKcVWP9eKcOGsQO~-GxoRFISX65~f0n3fM-f5nHQIm8wL0wTpbRvXxhXE4odw__

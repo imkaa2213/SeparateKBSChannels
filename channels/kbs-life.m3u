@@ -1,0 +1,5 @@
+#EXTM3U
+#EXTINF:-1 tvg-id="N93" tvg-name="KBS Life" group-title="KBS",KBS Life
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
+#EXTVLCOPT:http-referrer=https://onair.kbs.co.kr/
+https://kbsnlife.gscdn.kbs.co.kr/kbsnlife-01/kbsnlife-01_sd.m3u8?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9rYnNubGlmZS5nc2Nkbi5rYnMuY28ua3Iva2JzbmxpZmUtMDEvKiIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4MDEzMzQ4MH19fV19&Key-Pair-Id=APKAICDSGT3Y7IXGJ3TA&Signature=EccloykZsauYVJaB6w-hVEmmiq-B47B7rkL52wAvZQlzpEsgAbB-Sazot7c1TqJ6C6Rl3dwuOX49Mzjb2em0Ltm4v7nanQit-QY9NyvBUTI32e-Llvf4DZ~nhSgStDunFNo39qsG3Bb6q7w5psFW4XMHACv2nE2x8emYiXSlJFcsdBTts2~3Xym3yhig-QlVdkVxFvbYw5DCVLVZfHPtjEf0EuN9~g8KubufpuQjraoNoiJMLi-yQzhOqDn2IPBzk4xKoxxxLpkBSp0yJ7r~ymUKu4XCbCmdcs0FUmyr9sUT7KXeijBbhm1wM9NqbxEVGnKHDlzUrERdUQSBWfhW1A__
