@@ -1,70 +1,36 @@
-import json
 import os
+import re
 import sys
 import urllib.request
 
 SOURCE = (
     "https://raw.githubusercontent.com/"
     "kgkaku/KBS-Live-Channels-Playlist/"
-    "main/kbs-nsplayer.m3u"
+    "main/kbs-extvlcopt.m3u"
 )
 
 OUTPUT_DIR = "channels"
 
-USER_AGENT = (
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-    "AppleWebKit/537.36"
-)
-
-# Only TV/video.
-# Radio is not included.
 CHANNELS = {
-    "KBS1": {
-        "code": "11",
-        "file": "kbs1.m3u",
-    },
-    "KBS2": {
-        "code": "12",
-        "file": "kbs2.m3u",
-    },
-    "KBS World": {
-        "code": "14",
-        "file": "kbs-world.m3u",
-    },
-    "KBS24": {
-        "code": "81",
-        "file": "kbs24.m3u",
-    },
-    "KBS Drama": {
-        "code": "N91",
-        "file": "kbs-drama.m3u",
-    },
-    "KBS Joy": {
-        "code": "N92",
-        "file": "kbs-joy.m3u",
-    },
-    "KBS Life": {
-        "code": "N93",
-        "file": "kbs-life.m3u",
-    },
-    "KBS Story": {
-        "code": "N94",
-        "file": "kbs-story.m3u",
-    },
-    "KBS Kids": {
-        "code": "N96",
-        "file": "kbs-kids.m3u",
-    },
+    "11": "kbs1.m3u",
+    "12": "kbs2.m3u",
+    "14": "kbs-world.m3u",
+    "81": "kbs24.m3u",
+    "N91": "kbs-drama.m3u",
+    "N92": "kbs-joy.m3u",
+    "N93": "kbs-life.m3u",
+    "N94": "kbs-story.m3u",
+    "N96": "kbs-kids.m3u",
 }
 
 
-def download_source():
-    print("Downloading current KBS stream data...")
+def download_playlist():
+    print("Downloading current KBS playlist...")
 
     request = urllib.request.Request(
         SOURCE,
         headers={
-            "User-Agent": USER_AGENT,
+            "User-Agent": "Mozilla/5.0",
         },
     )
 
@@ -72,74 +38,81 @@ def download_source():
         request,
         timeout=30,
     ) as response:
-        text = response.read().decode("utf-8")
+        return response.read().decode(
+            "utf-8",
+            errors="replace",
+        )
 
-    return json.loads(text)
 
-
-def build_stream_url(link, cookie):
+def parse_entries(text):
     """
-    Source provides the stable stream URL separately
-    from KBS's current signed authorization.
-
-    For ordinary M3U players, append the authorization
-    as the query string.
+    Split the upstream M3U into individual channel entries.
     """
 
-    if not cookie:
-        return link
+    lines = text.splitlines()
 
-    if "?" in link:
-        return link + "&" + cookie
+    entries = []
+    current = []
 
-    return link + "?" + cookie
+    for line in lines:
+
+        line = line.strip()
+
+        if line.startswith("#EXTINF:"):
+
+            if current:
+                entries.append(current)
+
+            current = [line]
+
+        elif current:
+
+            # Keep VLC options and URL.
+            if line:
+                current.append(line)
+
+                # Signed stream URL is the end of this entry.
+                if (
+                    not line.startswith("#")
+                    and ".m3u8" in line.lower()
+                ):
+                    entries.append(current)
+                    current = []
+
+    if current:
+        entries.append(current)
+
+    return entries
 
 
-def write_channel(name, info, source_item):
-    link = source_item.get("link", "").strip()
-    cookie = source_item.get("cookie", "").strip()
+def get_channel_code(entry):
+    extinf = entry[0]
 
-    if not link:
-        raise RuntimeError("Missing stream link")
-
-    if not cookie:
-        raise RuntimeError("Missing KBS authorization")
-
-    stream_url = build_stream_url(
-        link,
-        cookie,
+    match = re.search(
+        r'tvg-id="([^"]+)"',
+        extinf,
     )
 
-    code = info["code"]
+    if not match:
+        return None
 
-    playlist = (
-        "#EXTM3U\n"
-        f'#EXTINF:-1 tvg-id="{code}" '
-        f'tvg-name="{name}" '
-        f'group-title="KBS",{name}\n'
-        f"#EXTVLCOPT:http-user-agent={USER_AGENT}\n"
-        "#EXTVLCOPT:http-referrer="
-        "https://onair.kbs.co.kr/\n"
-        f"{stream_url}\n"
-    )
+    return match.group(1)
 
-    path = os.path.join(
-        OUTPUT_DIR,
-        info["file"],
-    )
 
-    # Write only after we have both URL and authorization.
-    with open(
-        path,
-        "w",
-        encoding="utf-8",
-    ) as file:
-        file.write(playlist)
+def get_stream_url(entry):
+    for line in entry:
 
-    return path
+        if (
+            not line.startswith("#")
+            and ".m3u8" in line.lower()
+        ):
+            return line
+
+    return None
 
 
 def main():
+
     print()
     print("=" * 50)
     print(" KBS Separate Channel Updater")
@@ -151,74 +124,120 @@ def main():
         exist_ok=True,
     )
 
+    # ---------------------------------------------
+    # Download upstream
+    # ---------------------------------------------
+
     try:
-        source_data = download_source()
+        text = download_playlist()
+
     except Exception as error:
-        print(f"ERROR downloading source: {error}")
+
+        print(
+            f"ERROR downloading playlist: {error}"
+        )
+
         return 1
 
-    if not isinstance(source_data, list):
-        print("ERROR: Source data isn't a JSON list.")
-        return 1
+    # ---------------------------------------------
+    # Parse
+    # ---------------------------------------------
+
+    entries = parse_entries(text)
 
     print(
-        f"Source contains {len(source_data)} channels."
+        f"Found {len(entries)} playlist entries."
     )
+
     print()
-
-    # Make source lookup by name.
-    source_by_name = {}
-
-    for item in source_data:
-        if not isinstance(item, dict):
-            continue
-
-        name = item.get("name")
-
-        if name:
-            source_by_name[name.strip()] = item
 
     updated = 0
-    failed = 0
+    missing = []
 
-    for name, info in CHANNELS.items():
+    # ---------------------------------------------
+    # Process channels
+    # ---------------------------------------------
 
-        print("-" * 50)
-        print(f"Channel : {name}")
-        print(f"Code    : {info['code']}")
+    for entry in entries:
 
-        source_item = source_by_name.get(name)
+        code = get_channel_code(entry)
 
-        if source_item is None:
-            print("Result  : FAILED")
-            print("Error   : Channel missing from source")
-            failed += 1
+        if not code:
             continue
 
-        try:
-            path = write_channel(
-                name,
-                info,
-                source_item,
+        if code not in CHANNELS:
+            continue
+
+        stream_url = get_stream_url(entry)
+
+        if not stream_url:
+            print(
+                f"SKIP {code}: no stream URL"
             )
+            continue
 
-            print(f"Result  : UPDATED")
-            print(f"File    : {path}")
+        filename = CHANNELS[code]
 
-            updated += 1
+        path = os.path.join(
+            OUTPUT_DIR,
+            filename,
+        )
 
-        except Exception as error:
-            print("Result  : FAILED")
-            print(f"Error   : {error}")
+        # Preserve upstream entry exactly.
+        output = (
+            "#EXTM3U\n\n"
+            + "\n".join(entry)
+            + "\n"
+        )
 
-            failed += 1
+        with open(
+            path,
+            "w",
+            encoding="utf-8",
+        ) as file:
+
+            file.write(output)
+
+        updated += 1
+
+        print(
+            f"UPDATED {code:>3} -> {path}"
+        )
+
+    # ---------------------------------------------
+    # Check expected channels
+    # ---------------------------------------------
+
+    for code, filename in CHANNELS.items():
+
+        path = os.path.join(
+            OUTPUT_DIR,
+            filename,
+        )
+
+        if not os.path.exists(path):
+            missing.append(code)
+
+    # ---------------------------------------------
+    # Summary
+    # ---------------------------------------------
 
     print()
     print("=" * 50)
-    print(" Update Summary")
+    print("Update Summary")
     print("=" * 50)
-    print(f"Updated: {updated}")
-    print(f"Failed : {failed}")
+
+    print(
+        f"Updated: {updated}"
+    )
+
+    if missing:
+
+        print(
+            "Missing: "
+            + ", ".join(missing)
+        )
+
     print("=" * 50)
 
     if updated == 0:
