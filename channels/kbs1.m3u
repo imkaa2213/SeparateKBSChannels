@@ -1,6 +1,0 @@
-#EXTM3U
-
-#EXTINF:-1 tvg-id="11" tvg-name="KBS1" tvg-logo="https://padmin.static.kbs.co.kr/live/2025/2/3/1738538621612_433742.png" group-title="KBS",KBS1
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
-#EXTVLCOPT:http-referrer=https://onair.kbs.co.kr/
-https://1tv.gscdn.kbs.co.kr/1tv_3.m3u8?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly8xdHYuZ3NjZG4ua2JzLmNvLmtyLyoiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3OTA1NjgyOTF9fX1dfQ__&Key-Pair-Id=APKAICDSGT3Y7IXGJ3TA&Signature=mQiLdx0krieHLTDBrPwnxxNVX97F~BONlNqqMPoJOWHLIni74~u6sCmcKU4ie0d0t40jCdVZ5xeSoEiiKTwuNeJhcpmNVMLFQ3IaHZ-G0gOrzxYSM52ynI6stASKHFX0K6PJ21dxvfK24yxqMiQFYwiRX5YZN4GDHxc85KlVl5KGMf4vmsWnt2uTPy-iOQdQd3zj3ScZVs~Lahx9iwr6qsdZCWgl4fgjIypoYw5uz~p2nYT6i8FIATqRKJS3v1hgEvAbxznKcANWPxoo6bRAvYNTaArVq9AYZxViPdFIKM11BsZcNj1tFc5E~mfoYMLM9Efa5btO40mMQncA4Bp~Tg__
